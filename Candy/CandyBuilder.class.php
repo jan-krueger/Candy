@@ -23,7 +23,7 @@ class CandyBuilder {
     private $workingQuery = null, $fields = null, $table = null, $where = null, $limit = null;
 
     /**
-     * @param Database $database
+     * @param Candy $database
      * @param $workingQuery
      */
     public function __construct(Candy $database, $workingQuery) {

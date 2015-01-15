@@ -5,7 +5,7 @@ namespace SweetCode\Candy;
 use \PDO;
 
 /**
- * Class CandyDB
+ * Class Candy
  * @author Yonas
  * @version 0.1-pre1
  * @package SweetCode\Candy
@@ -16,7 +16,7 @@ class Candy {
      * @var string holds the hostname
      * @var string holds the username
      * @var string holds the password
-     * $var string holds the database ma,e
+     * @var string holds the database ma,e
      */
     private $host = "localhost", $user = "root", $pass = "", $name = "quickdatabase";
 
@@ -69,7 +69,7 @@ class Candy {
     }
 
     /**
-     * @param DatabaseAction $action
+     * @param CandyAction $action
      */
     public function newBuilder($action) {
         return new CandyBuilder($this, $action);
@@ -143,7 +143,7 @@ class Candy {
     }
 
     /**
-     * Very similar to the @see Database::resultSet() method, the @see Database::resultSingle() returns a single record from the database.
+     * Very similar to the @see Candy::resultSet() method, the @see Candy::resultSingle() returns a single record from the database.
      * @return mixed
      */
     public function resultSingle() {
