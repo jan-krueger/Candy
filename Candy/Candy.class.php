@@ -14,11 +14,23 @@ class Candy {
 
     /**
      * @var string holds the hostname
-     * @var string holds the username
-     * @var string holds the password
-     * @var string holds the database ma,e
      */
-    private $host = "localhost", $user = "root", $pass = "", $name = "quickdatabase";
+    private $host;
+
+    /**
+     * @var string holds the username
+     */
+    private $user;
+
+    /**
+     * @var string holds the password
+     */
+    private $pass;
+
+    /**
+     * @var string holds the database name
+     */
+    private $name;
 
     /**
      * @var \PDO holds the PDO object
@@ -120,16 +132,12 @@ class Candy {
     }
 
     /**
-     * The method executes the prepared statement.
+     * The method executes the statement.
      * @return $this
      */
     public function execute() {
 
-        //reset
-        $this->workingQuery = null;
-        $this->fields = null;
-        $this->table = null;
-        $this->where = null;
+        $this->stmt->execute();
 
         return $this;
     }

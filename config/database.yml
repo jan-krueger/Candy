@@ -1,0 +1,5 @@
+mysql: &mysql
+  - adapter: mysql5
+  - username: root
+  - password:
+  - database: candy

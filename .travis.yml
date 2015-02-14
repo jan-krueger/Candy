@@ -1,3 +1,8 @@
 language: php
 before_install:
-- sudo apt-get update
+  - sudo apt-get update
+env:
+  - DB:mysql
+before_script:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS `candy`;'
+  - mysql -e 'CREATE TABLE IF NOT EXISTS `users` (`name` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;'
