@@ -10,6 +10,9 @@ use \PDO;
  */
 class CandyBuilder {
 
+    /**
+     * @var Candy holds the instance of the Candy Class who is running this Builder
+     */
     private $database;
 
     /**

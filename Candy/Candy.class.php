@@ -7,7 +7,6 @@ use \PDO;
 /**
  * Class Candy
  * @author Yonas
- * @version 0.1-pre1
  * @package SweetCode\Candy
  */
 class Candy {
@@ -34,15 +33,22 @@ class Candy {
 
     /**
      * @var \PDO holds the PDO object
-     * @var string holds the latest error
      */
-    private $db, $error;
+    private $db;
+
+    /**
+     * @var \Exception|PDOException holds the latest error
+     */
+    private $error;
 
     /**
      * @var PDOStatement holds the latest PDOStatement to use it everywhere in the class
      */
     private $stmt;
 
+    /**
+     * @var array holds the default options
+     */
     private static $options = [
         PDO::ATTR_PERSISTENT => true,
         PDO::ERRMODE_EXCEPTION => PDO::ERRMODE_EXCEPTION

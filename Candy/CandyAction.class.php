@@ -5,7 +5,6 @@ namespace SweetCode\Candy;
 /**
  * Class CandyAction
  * @author Yonas
- * @version 0.1-pre1
  * @package SweetCode\Candy
  */
 class CandyAction {
