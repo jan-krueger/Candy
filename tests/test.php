@@ -8,7 +8,7 @@ require_once 'Candy/CandyAction.class.php';
 use SweetCode\Candy\Candy;
 use SweetCode\Candy\CandyAction;
 
-class CandyTest extends /*PHPUnit_Extensions_Database_TestCase*/ PHPUnit_Framework_TestCase {
+class CandyTest extends PHPUnit_Extensions_Database_TestCase {
 
     /**
      * @var Candy holds the Candy instance
@@ -20,8 +20,21 @@ class CandyTest extends /*PHPUnit_Extensions_Database_TestCase*/ PHPUnit_Framewo
      */
     private $defaultDBConnection;
 
-    public function __construct() {
-        $this->database = new Candy("localhost", "root", "", "candy");
+    public function __construct() {}
+
+    public function getConnection() {
+
+        if(is_null($this->database)) {
+            $candy = $this->database = new Candy("localhost", "root", "", "candy");
+            return $this->defaultDBConnection = $this->createDefaultDBConnection($candy->getConnection(), 'candy:');
+        }
+
+        return $this->defaultDBConnection;
+
+    }
+
+    public function getDataSet()  {
+        return $this->createFlatXmlDataSet('tests/users.xml');
     }
 
     /*
@@ -50,8 +63,12 @@ class CandyTest extends /*PHPUnit_Extensions_Database_TestCase*/ PHPUnit_Framewo
             ->where([
                 'name' => [
                     'value' => 'Yonas',
+                    'comparator' => '=',
+                    'operator' => CandyAction::WHERE_AND
+                ],
+                'email' => [
+                    'value' => 'yonas@example.com',
                     'comparator' => '='
-                    //'operator' => CandyAction::WHERE_AND
                 ]
             ])
             ->build()
