@@ -1,8 +1,8 @@
 <?php
 
-require_once '../Candy/Candy.class.php';
-require_once '../Candy/CandyBuilder.class.php';
-require_once '../Candy/CandyAction.class.php';
+require_once 'Candy/Candy.class.php';
+require_once 'Candy/CandyBuilder.class.php';
+require_once 'Candy/CandyAction.class.php';
 
 use SweetCode\Candy\Candy;
 use SweetCode\Candy\CandyAction;
