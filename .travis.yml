@@ -5,4 +5,4 @@ script: phpunit tests/test.php
 before_script:
   - mysql -e 'CREATE DATABASE `candy`;'
 #  - mysql -e 'USE `candy`; CREATE TABLE `candy.users` (`name` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;'
-  - mysql -u root < tests/users.sql
+  - mysql -uroot < tests/users.sql
