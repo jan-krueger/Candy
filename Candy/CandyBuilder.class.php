@@ -6,9 +6,10 @@ use \PDO;
 
 /**
  * Class CandyBuilder
+ * @author Yonas
  * @package SweetCode\Candy
  */
-class CandyBuilder {
+class CandyBuilder implements CandyPacking {
 
     /**
      * @var Candy holds the instance of the Candy Class who is running this Builder
@@ -16,14 +17,44 @@ class CandyBuilder {
     private $database;
 
     /**
-     * @author Yonas
-     * @version 0.1-pre1
      * @var PDOStatement
      */
     private $stmt;
 
-    //building section
-    private $workingQuery = null, $fields = null, $table = null, $where = null, $limit = null;
+    /**
+     * @var string holds the query
+     */
+    private $workingQuery;
+
+    /**
+     * @var array holds the fields
+     */
+    private $fields;
+
+    /**
+     * @var string holds the table name
+     */
+    private $table;
+
+    /**
+     * @var array holds the conditions
+     */
+    private $where;
+
+    /**
+     * @var array holds the limit conditions
+     */
+    private $limit;
+
+
+    /**
+     * @var array holds information about the last occurred error.
+     */
+    private $error = [
+                        'failed' => false,
+                        'code' => -1,
+                        'message' => null
+    ];
 
     /**
      * @param Candy $database
@@ -35,8 +66,9 @@ class CandyBuilder {
     }
 
     /**
-     * @param array $fields
-     * @return $this
+     * Sets the used fields
+     * @param array $fields the array with the field names
+     * @return CandyBuilder
      */
     public function fields(array $fields) {
         $this->fields = $fields;
@@ -44,8 +76,9 @@ class CandyBuilder {
     }
 
     /**
-     * @param $table
-     * @return $this
+     * Sets the used table
+     * @param string $table the table name
+     * @return CandyBuilder
      */
     public function table($table) {
         $this->table = $table;
@@ -53,8 +86,9 @@ class CandyBuilder {
     }
 
     /**
-     * @param array $where
-     * @return $this
+     * Sets the 'where'-conditions
+     * @param array $where the conditions array
+     * @return CandyBuilder
      */
     public function where(array $where) {
         $this->where = $where;
@@ -62,9 +96,10 @@ class CandyBuilder {
     }
 
     /**
-     * @param $max
-     * @param int $range
-     * @return $this
+     * Sets the limit
+     * @param $max the maximum amount of results
+     * @param int $range the range of the results
+     * @return CandyBuilder
      */
     public function limit($max, $range = 0) {
         $this->limit['max'] = $max;
@@ -73,13 +108,14 @@ class CandyBuilder {
     }
 
     /**
-     * @return $this
-     * @throws Exception
+     * Build up the query
+     * @throws \Exception When do you missed to use the {@see CandyBuilder::table()} or you missed to use
+     * @return CandyBuilder
      */
     public function build() {
 
         if(is_null($this->workingQuery) || is_null($this->table)) {
-            throw new Exception(sprintf("Missing arguments (%s %s %s)",
+            throw new \Exception(sprintf("Missing arguments (%s %s %s)",
                 is_null($this->workingQuery) ? 'DatabaseBuilder#workingQuery' : null,
                 is_null($this->table) ? 'DatabaseBuilder#table' : null
             ));
@@ -142,6 +178,11 @@ class CandyBuilder {
 
                 foreach($this->fields as $field) {
 
+                    if($field == '*') {
+                        $operator = array('*');
+                        break;
+                    }
+
                     $operator[] = "`{$field}`";
 
                 }
@@ -199,50 +240,8 @@ class CandyBuilder {
     }
 
     /**
-     * @param $query
-     * @return $this
-     */
-    private function query($query) {
-        $this->stmt = $this->database->getDatabase()->prepare($query);
-        return $this;
-    }
-
-    /**
-     * @param $params
-     */
-    private function bindAll($params) {
-
-        if(is_null($params)) {
-            return;
-        }
-
-        foreach($params as $param => $value) {
-            $this->bind($param, $value);
-        }
-
-    }
-
-    /**
-     * @param $param
-     * @param $value
-     * @param null $type
-     */
-    private function bind($param, $value, $type = null) {
-
-        if (is_null($type)) {
-            switch (true) {
-                case is_int($value): $type = PDO::PARAM_INT; break;
-                case is_bool($value): $type = PDO::PARAM_BOOL; break;
-                case is_null($value): $type = PDO::PARAM_NULL; break;
-                default: $type = PDO::PARAM_STR; break;
-            }
-        }
-
-        $this->stmt->bindValue($param, $value, $type);
-    }
-
-    /**
-     * Returns an array of the result set rows.
+     * Returns an array of the result set rows
+     * @param integer $method Controls how the next row will be returned to the caller. This value must be one of the PDO::FETCH_* constants, defaulting to value of PDO::ATTR_DEFAULT_FETCH_MODE (which defaults to PDO::FETCH_BOTH)
      * @return array
      */
     public function resultSet($method = PDO::FETCH_ASSOC) {
@@ -250,7 +249,8 @@ class CandyBuilder {
     }
 
     /**
-     * Very similar to the @see Database#resultSet methd, the @see Database#resultSingle returns a single record from the database.
+     * Very similar to the {@see Database::resultSet()} method, the {@see Database::resultSingle} returns a single record from the database.
+     * @param integer $method Controls how the next row will be returned to the caller. This value must be one of the PDO::FETCH_* constants, defaulting to value of PDO::ATTR_DEFAULT_FETCH_MODE (which defaults to PDO::FETCH_BOTH)
      * @return mixed
      */
     public function resultSingle($method = PDO::FETCH_ASSOC) {
@@ -266,7 +266,8 @@ class CandyBuilder {
     }
 
     /**
-     * @return $this
+     * Executes the Query
+     * @return CandyBuilder
      */
     public function execute() {
         $this->stmt->execute();
@@ -274,10 +275,63 @@ class CandyBuilder {
     }
 
     /**
-     * @return mixed
+     * Returns an array which is filled up with information about the last error
+     * @return array
      */
     public function errorInfo() {
         return $this->stmt->errorInfo();
+    }
+
+    /**
+     * This function sets the query
+     * @param $query
+     * @return $this
+     */
+    private function query($query) {
+        $this->stmt = $this->database->getConnection()->prepare($query);
+        return $this;
+    }
+
+    /**
+     * Binds a array of parameters to the specified variable name
+     * @param $params the array with the parameters
+     * @return void
+     */
+    private function bindAll($params) {
+
+        if(is_null($params)) {
+            return;
+        }
+
+        if(!(is_array($params))) {
+            return;
+        }
+
+        foreach($params as $param => $value) {
+            $this->bind($param, $value);
+        }
+
+    }
+
+    /**
+     * Binds a parameter to the specified variable name
+     * @param string $param the parameter
+     * @param mixed $value the value of the parameter
+     * @param null|integer $type Controls the kind of the given value. This value must be one of the PDO::PARAM_* constants, defaulting to value of PDO::PARAM_STR
+     * @return void
+     */
+    private function bind($param, $value, $type = null) {
+
+        if (is_null($type)) {
+            switch (true) {
+                case is_int($value): $type = PDO::PARAM_INT; break;
+                case is_bool($value): $type = PDO::PARAM_BOOL; break;
+                case is_null($value): $type = PDO::PARAM_NULL; break;
+                default: $type = PDO::PARAM_STR; break;
+            }
+        }
+
+        $this->stmt->bindValue($param, $value, $type);
     }
 
 }

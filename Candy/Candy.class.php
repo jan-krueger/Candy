@@ -29,7 +29,7 @@ class Candy {
     /**
      * @var string holds the database name
      */
-    private $name;
+    private $database;
 
     /**
      * @var \PDO holds the PDO object
@@ -56,21 +56,21 @@ class Candy {
 
     /**
      * The constructor to fill up the basic stuff.
-     * @param $host the hostname
-     * @param $user the username to access the database
-     * @param $pass the password to access teh database
-     * @param $name the used database
+     * @param string $host the hostname
+     * @param string $user the username to access the database
+     * @param string $password the password to access teh database
+     * @param string $database the used database
      */
-    public function __construct($host, $user, $pass, $name) {
+    public function __construct($host, $user, $password, $database) {
 
         $this->host = $host;
         $this->user = $user;
-        $this->pass = $pass;
-        $this->name = $name;
+        $this->pass = $password;
+        $this->database = $database;
 
         try {
 
-            $this->db = new PDO(sprintf('mysql:host=%s;dbname=%s', $this->host, $this->name), $this->user, $this->pass, Candy::$options);
+            $this->db = new PDO(sprintf('mysql:host=%s;dbname=%s', $this->host, $this->database), $this->user, $this->pass, Candy::$options);
 
         } catch(PDOException $e) {
             $this->error = $e;
@@ -82,14 +82,22 @@ class Candy {
      * Returns the PDO instance, used by this class.
      * @return PDO
      */
-    public function getDatabase() {
+    public function getConnection() {
         return $this->db;
     }
 
     /**
+     * This functions returns a new CandyBuilder to build up the statement
      * @param CandyAction $action
+     * @throws \Exception When the given action is not a valid CandyAction syntax
+     * @return CandyBuilder
      */
     public function newBuilder($action) {
+
+        if(!(CandyAction::checkSyntax($action))) {
+            throw new \Exception("The given action is invalid.");
+        }
+
         return new CandyBuilder($this, $action);
     }
 
@@ -107,6 +115,7 @@ class Candy {
     /**
      * In order to prepare the SQL query, the method bind the inputs with the placeholders you placed.
      * @param array $params is an associative array. The key is the placeholder value and the value is the actual value that you want to bind to the placeholder.
+     * @return Candy
      */
     public function bindAll(array $params) {
 
@@ -118,8 +127,9 @@ class Candy {
 
     /**
      * In order to prepare the SQL query, the method bind the inputs with the placeholders that you placed.
-     * @param $param is the placeholder value that will be usin in the SQL statement.
-     * @param $value is the actual value that you want to bind to the placeholder.
+     * @param string $param is the placeholder value that will be usin in the SQL statement.
+     * @param mixed $value is the actual value that you want to bind to the placeholder.
+     * @param null|integer $type Controls the kind of the given value. This value must be one of the PDO::PARAM_* constants, defaulting to value of PDO::PARAM_STR
      * @return $this
      */
     public function bind($param, $value, $type = null) {
@@ -139,7 +149,7 @@ class Candy {
 
     /**
      * The method executes the statement.
-     * @return $this
+     * @return Candy
      */
     public function execute() {
 
@@ -162,6 +172,14 @@ class Candy {
      */
     public function resultSingle() {
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Returns an array which is filled up with information about the last error
+     * @return array
+     */
+    public function errorInfo() {
+        return $this->stmt->errorInfo();
     }
 
 }
