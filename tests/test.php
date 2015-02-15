@@ -34,7 +34,7 @@ class CandyTest extends /*PHPUnit_Extensions_Database_TestCase*/ PHPUnit_Framewo
             ->build()
             ->execute();
 
-        //$this->assertEquals(0, $builder->errorInfo()[0], "CandyTest::testInsertAction failed!");
+        $this->assertEquals(0, $builder->errorInfo()[0], $builder->errorInfo());
     }
 
     /*
@@ -57,7 +57,7 @@ class CandyTest extends /*PHPUnit_Extensions_Database_TestCase*/ PHPUnit_Framewo
             ->build()
             ->execute();
 
-        $this->assertEquals(0, $builder->errorInfo()[0], "CandyTest::testUpdateAction failed!");
+        $this->assertEquals(0, $builder->errorInfo()[0], $builder->errorInfo());
     }
 
 
