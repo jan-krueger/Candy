@@ -5,4 +5,5 @@ env:
   - DB:mysql
 before_script:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `candy`;'
+  - mysql -e 'USE `candy`'
   - mysql -e 'CREATE TABLE IF NOT EXISTS `candy.users` (`name` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;'
