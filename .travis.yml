@@ -3,5 +3,5 @@ env:
   - DB:mysql
 script: phpunit tests/test.php
 before_script:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS `candy`;'
-  - mysql -e 'USE `candy`; CREATE TABLE IF NOT EXISTS `candy.users` (`name` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+  - mysql -e 'CREATE DATABASE `candy`;'
+  - mysql -e 'USE `candy`; CREATE TABLE `candy.users` (`name` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, `password` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;'
