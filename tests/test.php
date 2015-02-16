@@ -108,7 +108,12 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
             ->fields(['*'])
             ->table('users')
             ->limit(1)
-            ->where(['name' => ['value' => 'Yonas', 'comparator' => "="]])
+            ->where(
+                [
+                    'name' => ['value' => 'Yonas', 'comparator' => "=", 'operator' => CandyAction::WHERE_AND],
+                    'email' => ['value' => 'awe@awesome.com', 'comparator' => "="]
+                ]
+            )
             ->build()->execute()->resultSet();
 
         $this->assertEquals(
@@ -132,6 +137,65 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
         $this->assertEquals(0, $builder->errorInfo()[0], $builder->errorInfo());
     }
 
+    /**
+     * Tests the Exception of the @see \SweetCode\Candy\Candy::newBuilder() method
+     * @expectedException \InvalidArgumentException
+     */
+    public function testBuilderExceptionIfInvalidActionIsGiven() {
+
+        $this->database->newBuilder("JUST A STUPID TEST");
+
+    }
+
+    /**
+     * Tests the Exception of the @see \SweetCode\Candy\Candy::__constructor() method
+     * @expectedException \InvalidArgumentException
+     */
+    public function testConstructorIfInvalidArgumentIsGiven() {
+
+        new Candy("localhost", "root", "", null);
+
+    }
+
+    /**
+     * Tests the Exception of the @see \SweetCode\Candy\Candy::query() method
+     * @expectedException \InvalidArgumentException
+     */
+    public function testQueryIfInvalidArgumentIsGiven() {
+
+        $this->database->query(null);
+
+    }
+
+    /**
+     * Tests the Exception of the @see \SweetCode\Candy\Candy::bindAll() method when a non-array argument is given
+     * @expectedException \InvalidArgumentException
+     */
+    public function testBindAllIfInvalidArgumentIsGivenInThisCaseAString() {
+
+        $this->database->bindAll("JUST A STUPID TEST");
+
+    }
+
+    /**
+     * Tests the Exception of the @see \SweetCode\Candy\Candy::bindAll() method when the argument is null
+     * @expectedException \InvalidArgumentException
+     */
+    public function testBindAllIfInvalidArgumentIsGivenInThisCaseNull() {
+
+        $this->database->bindAll(null);
+
+    }
+
+    /**
+     * Tests the Exception of the @see \SweetCode\Candy\Candy::bind() method when the argument is null
+     * @expectedException \InvalidArgumentException
+     */
+    public function testBindIfInvalidArgumentIsGivenInThisCaseNull() {
+
+        $this->database->bind(null, "JUST A STUPID TEST");
+
+    }
 
 }
 

@@ -64,6 +64,7 @@ class Candy {
      * @param string $user the username to access the database
      * @param string $password the password to access teh database
      * @param string $database the used database
+     * @throws \InvalidArgumentException If one or more given arguments are null.
      */
     public function __construct($host, $user, $password, $database) {
 
@@ -71,6 +72,10 @@ class Candy {
         $this->user = $user;
         $this->pass = $password;
         $this->database = $database;
+
+        if(is_null($host) || is_null($user) || is_null($password) || is_null($database)) {
+            throw new \InvalidArgumentException("One or more given arguments are null.");
+        }
 
         try {
 
@@ -93,13 +98,13 @@ class Candy {
     /**
      * This functions returns a new CandyBuilder to build up the statement
      * @param CandyAction $action
-     * @throws \Exception When the given action is not a valid CandyAction syntax
+     * @throws \InvalidArgumentException When the given action is not a valid CandyAction syntax
      * @return CandyBuilder
      */
     public function newBuilder($action) {
 
         if(!(CandyAction::checkSyntax($action))) {
-            throw new \Exception("The given action is invalid.");
+            throw new \InvalidArgumentException("The given action is invalid.");
         }
 
         return new CandyBuilder($this, $action);
@@ -109,9 +114,15 @@ class Candy {
     /**
      * The method introduces the stmt variable to hold the statement.
      * @param $query
+     * @throws \InvalidArgumentException When the given query value is null
      * @return $this
      */
     public function query($query) {
+
+        if(is_null($query)) {
+            throw new \InvalidArgumentException("The query can't be null.");
+        }
+
         $this->stmt = $this->db->prepare($query);
         return $this;
     }
@@ -119,9 +130,18 @@ class Candy {
     /**
      * In order to prepare the SQL query, the method bind the inputs with the placeholders you placed.
      * @param array $params is an associative array. The key is the placeholder value and the value is the actual value that you want to bind to the placeholder.
+     * @throws \InvalidArgumentException When the given argument is null or the given argument is not an array
      * @return Candy
      */
-    public function bindAll(array $params) {
+    public function bindAll($params) {
+
+        if(!(is_array($params))) {
+            throw new \InvalidArgumentException("The given params is not an array.");
+        }
+
+        if(is_null($params)) {
+            throw new \InvalidArgumentException("The given params is null.");
+        }
 
         foreach($params as $param => $value) {
             $this->bind($param, $value);
@@ -134,9 +154,14 @@ class Candy {
      * @param string $param is the placeholder value that will be usin in the SQL statement.
      * @param mixed $value is the actual value that you want to bind to the placeholder.
      * @param null|integer $type Controls the kind of the given value. This value must be one of the PDO::PARAM_* constants, defaulting to value of PDO::PARAM_STR
+     * @throws \InvalidArgumentException When the given param is null.
      * @return $this
      */
     public function bind($param, $value, $type = null) {
+
+        if(is_null($param)) {
+            throw new \InvalidArgumentException("The given param is null.");
+        }
 
         if (is_null($type)) {
             switch ($value) {

@@ -62,7 +62,7 @@ class CandyBuilder implements CandyPacking {
     /**
      * This is the constructor to create a new object of CandyBuilder
      * @param Candy $database the instance of the database
-     * @param $workingQuery the CandyAction
+     * @param string $workingQuery the CandyAction
      */
     public function __construct(Candy $database, $workingQuery) {
         $this->database = $database;
