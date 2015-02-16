@@ -81,7 +81,7 @@ class Candy
         }
 
         try {
-            $this->db = new PDO(sprintf('mysql:host=%s;dbname=%s', $this->host, $this->database), $this->user, $this->pass, Candy::$options);
+            $this->db = new PDO(sprintf('mysql:host=%s;dbname=%s', $this->host, $this->database), $this->user, $this->pass, static::$options);
         } catch (PDOException $e) {
             $this->error = $e;
         }
@@ -169,24 +169,7 @@ class Candy
             throw new \InvalidArgumentException("The given param is null.");
         }
 
-        if (!($type === null)) {
-            switch ($value) {
-
-                case is_int($value): $type = PDO::PARAM_INT;
-                    break;
-
-                case is_bool($value): $type = PDO::PARAM_BOOL;
-                    break;
-
-                case ($value === null): $type = PDO::PARAM_NULL;
-                    break;
-
-                default: $type = PDO::PARAM_STR;
-                    break;
-            }
-        }
-
-        $this->stmt->bindValue($param, $value, $type);
+        $this->stmt->bindValue($param, $value, ($type === null ? Candy::getValueType($value) : $type));
         return $this;
     }
 
@@ -229,6 +212,28 @@ class Candy
         return $this->stmt->errorInfo();
     }
 
-}
+    /**
+     * This function checks the value and returns the given
+     * @param $value the value to check the type of
+     * @return int
+     */
+    public static function getValueType($value)
+    {
+        switch ($value) {
 
-?>
+            case is_int($value):
+                return PDO::PARAM_INT;
+
+            case is_bool($value):
+                return PDO::PARAM_BOOL;
+
+            case ($value === null):
+                return PDO::PARAM_NULL;
+
+            default:
+                return PDO::PARAM_STR;
+
+        }
+    }
+
+}

@@ -81,5 +81,3 @@ interface CandyPacking
     public function errorInfo();
 
 }
-
-?>

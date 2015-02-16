@@ -323,28 +323,7 @@ class CandyBuilder implements CandyPacking
      */
     private function bind($param, $value, $type = null)
     {
-
-        if (!($type === null)) {
-            switch (true) {
-
-                case is_int($value): $type = PDO::PARAM_INT;
-                    break;
-
-                case is_bool($value): $type = PDO::PARAM_BOOL;
-                    break;
-
-                case ($value === null): $type = PDO::PARAM_NULL;
-                    break;
-
-                default: $type = PDO::PARAM_STR;
-                    break;
-
-            }
-        }
-
-        $this->stmt->bindValue($param, $value, $type);
+        $this->stmt->bindValue($param, $value, ($type === null ? Candy::getValueType($value) : $type));
     }
 
 }
-
-?>
