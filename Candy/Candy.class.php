@@ -1,4 +1,7 @@
 <?php
+/**
+ * This file contains the Candy-Class.
+ */
 
 namespace SweetCode\Candy;
 
@@ -56,6 +59,7 @@ class Candy {
 
     /**
      * The constructor to fill up the basic stuff.
+     *
      * @param string $host the hostname
      * @param string $user the username to access the database
      * @param string $password the password to access teh database
@@ -167,7 +171,7 @@ class Candy {
     }
 
     /**
-     * Very similar to the @see Candy::resultSet() method, the @see Candy::resultSingle() returns a single record from the database.
+     * Very similar to the @see \SweetCode\Candy\Candy::resultSet() method, the @see \SweetCode\Candy\Candy::resultSingle() returns a single record from the database.
      * @return mixed
      */
     public function resultSingle() {

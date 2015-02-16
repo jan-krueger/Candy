@@ -1,7 +1,15 @@
 <?php
+/**
+ * This file contains the CandyPacking-Interface.
+ */
 
 namespace SweetCode\Candy;
 
+/**
+ * Interface CandyPacking
+ * @author Yonas
+ * @package SweetCode\Candy
+ */
 interface CandyPacking {
 
     /**

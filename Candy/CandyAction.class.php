@@ -1,4 +1,7 @@
 <?php
+/**
+ * This file contains the CandyAction-Class.
+ */
 
 namespace SweetCode\Candy;
 
@@ -39,6 +42,11 @@ class CandyAction {
      */
     const WHERE_OR = "OR";
 
+    /**
+     * This method checks whether the given Syntax-String has a correct syntax.
+     * @param string $given The syntax string.
+     * @return bool Returns true when the syntax is right.
+     */
     public static function checkSyntax($given) {
 
         switch($given) {

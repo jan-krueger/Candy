@@ -1,4 +1,7 @@
 <?php
+/**
+ * This file contains the CandyBuilder-Class.
+ */
 
 namespace SweetCode\Candy;
 
@@ -17,7 +20,7 @@ class CandyBuilder implements CandyPacking {
     private $database;
 
     /**
-     * @var PDOStatement
+     * @var PDOStatement holds the current PDOStatement
      */
     private $stmt;
 
@@ -57,8 +60,9 @@ class CandyBuilder implements CandyPacking {
     ];
 
     /**
-     * @param Candy $database
-     * @param $workingQuery
+     * This is the constructor to create a new object of CandyBuilder
+     * @param Candy $database the instance of the database
+     * @param $workingQuery the CandyAction
      */
     public function __construct(Candy $database, $workingQuery) {
         $this->database = $database;
@@ -97,7 +101,7 @@ class CandyBuilder implements CandyPacking {
 
     /**
      * Sets the limit
-     * @param $max the maximum amount of results
+     * @param int $max the maximum amount of results
      * @param int $range the range of the results
      * @return CandyBuilder
      */
