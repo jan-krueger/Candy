@@ -52,15 +52,6 @@ class CandyBuilder implements CandyPacking
 
 
     /**
-     * @var array holds information about the last occurred error.
-     */
-    private $error = [
-        'failed' => false,
-        'code' => -1,
-        'message' => null
-    ];
-
-    /**
      * This is the constructor to create a new object of CandyBuilder
      * @param Candy $database the instance of the database
      * @param string $workingQuery the CandyAction
