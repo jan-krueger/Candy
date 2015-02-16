@@ -55,9 +55,9 @@ class CandyBuilder implements CandyPacking
      * @var array holds information about the last occurred error.
      */
     private $error = [
-                        'failed' => false,
-                        'code' => -1,
-                        'message' => null
+        'failed' => false,
+        'code' => -1,
+        'message' => null
     ];
 
     /**
@@ -168,12 +168,8 @@ class CandyBuilder implements CandyPacking
             $limitString = sprintf($limitString, $tempLimit);
         }
 
-        //$this->workingQuery = DatabaseAction::getPattern($this->workingQuery, $whereString, $limitString);
-
         switch($this->workingQuery) {
 
-            //SELECT %s FROM `%s`
-            //SELECT `name`, `email` FROM `users`
             case CandyAction::SELECT:
 
                 foreach ($this->fields as $field) {
@@ -190,8 +186,6 @@ class CandyBuilder implements CandyPacking
 
                 break;
 
-            //INSERT INTO `%s` (%s) VALUES (%s)
-            //INSERT INTO `users` (`name`, `email`) VALUES (:name, :email)
             case CandyAction::INSERT:
 
                 foreach ($this->fields as $field => $value) {
@@ -204,8 +198,6 @@ class CandyBuilder implements CandyPacking
 
                 break;
 
-            //UPDATE `%s` SET %s
-            //UPDATE `users` SET `name` = :name, `email` = :email
             case CandyAction::UPDATE:
 
                 foreach ($this->fields as $field => $value) {
@@ -218,8 +210,6 @@ class CandyBuilder implements CandyPacking
 
                 break;
 
-            //DELETE FROM `%s` %s %s
-            //DELETE FROM `users`
             case CandyAction::DELETE:
 
                 $this->query(sprintf($this->workingQuery, $this->table, $whereString, $limitString));
