@@ -118,7 +118,7 @@ class CandyBuilder implements CandyPacking {
      */
     public function build() {
 
-        if (is_null($this->workingQuery) || is_null($this->table)) {
+        if(is_null($this->workingQuery) || is_null($this->table)) {
             throw new \Exception(sprintf("Missing arguments (%s %s %s)",
                 is_null($this->workingQuery) ? 'DatabaseBuilder#workingQuery' : null,
                 is_null($this->table) ? 'DatabaseBuilder#table' : null
@@ -131,21 +131,21 @@ class CandyBuilder implements CandyPacking {
         $whereString = null;
         $limitString = null;
 
-        if (!(is_null($this->where))) {
+        if(!(is_null($this->where))) {
 
             $whereString = "WHERE %s";
             $tempWhere = null;
 
-            foreach ($this->where as $field => $options) {
+            foreach($this->where as $field => $options) {
 
-                if (!(array_key_exists('value', $options)) || !(array_key_exists('comparator', $options))) {
+                if(!(array_key_exists('value', $options)) || !(array_key_exists('comparator', $options))) {
                     continue;
                 }
 
                 $tempWhere .= "`{$field}` {$options['comparator']} :where{$field}";
                 $params[":where{$field}"] = $options['value'];
 
-                if (array_key_exists('operator', $options)) {
+                if(array_key_exists('operator', $options)) {
 
                     $tempWhere .= " {$options['operator']} ";
 
@@ -157,14 +157,14 @@ class CandyBuilder implements CandyPacking {
 
         }
 
-        if (!(is_null($this->limit))) {
+        if(!(is_null($this->limit))) {
 
             $limitString = "LIMIT %s";
             $tempLimit = null;
 
             $tempLimit .= "{$this->limit['max']}";
 
-            if ($this->limit['range'] != 0) {
+            if($this->limit['range'] != 0) {
                 $tempLimit .= ", {$this->limit['range']}";
             }
 
@@ -174,15 +174,15 @@ class CandyBuilder implements CandyPacking {
 
         //$this->workingQuery = DatabaseAction::getPattern($this->workingQuery, $whereString, $limitString);
 
-        switch ($this->workingQuery) {
+        switch($this->workingQuery) {
 
             //SELECT %s FROM `%s`
             //SELECT `name`, `email` FROM `users`
             case CandyAction::SELECT:
 
-                foreach ($this->fields as $field) {
+                foreach($this->fields as $field) {
 
-                    if ($field == '*') {
+                    if($field == '*') {
                         $operator = array('*');
                         break;
                     }
@@ -200,10 +200,10 @@ class CandyBuilder implements CandyPacking {
             //INSERT INTO `users` (`name`, `email`) VALUES (:name, :email)
             case CandyAction::INSERT:
 
-                foreach ($this->fields as $field => $value) {
+                foreach($this->fields as $field => $value) {
 
                     $operator[] = "`{$field}`";
-                    $params[":{$field}"] = $value;
+                    $params[":{$field}"] =  $value;
 
                 }
 
@@ -216,10 +216,10 @@ class CandyBuilder implements CandyPacking {
             //UPDATE `users` SET `name` = :name, `email` = :email
             case CandyAction::UPDATE:
 
-                foreach ($this->fields as $field => $value) {
+                foreach($this->fields as $field => $value) {
 
                     $operator[] = "{$field} = :{$field}";
-                    $params[":{$field}"] = $value;
+                    $params[":{$field}"] =  $value;
 
                 }
 
@@ -303,15 +303,15 @@ class CandyBuilder implements CandyPacking {
      */
     private function bindAll($params) {
 
-        if (is_null($params)) {
+        if(is_null($params)) {
             return;
         }
 
-        if (!(is_array($params))) {
+        if(!(is_array($params))) {
             return;
         }
 
-        foreach ($params as $param => $value) {
+        foreach($params as $param => $value) {
             $this->bind($param, $value);
         }
 
