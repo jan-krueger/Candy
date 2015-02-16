@@ -117,7 +117,7 @@ class CandyBuilder implements CandyPacking
     {
 
         if ($this->workingQuery === null || $this->table === null) {
-            throw new \InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", $this->workingQuery === null ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, $this->table === null ? '\SweetCode\Candy\CandyBuilder::table()' : null ));
+            throw new \InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", $this->workingQuery === null ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, $this->table === null ? '\SweetCode\Candy\CandyBuilder::table()' : null));
         }
 
         $operator = null;
@@ -159,7 +159,7 @@ class CandyBuilder implements CandyPacking
             $limitString = sprintf($limitString, $tempLimit);
         }
 
-        switch($this->workingQuery) {
+        switch ($this->workingQuery) {
 
             case CandyAction::SELECT:
 
@@ -181,7 +181,7 @@ class CandyBuilder implements CandyPacking
 
                 foreach ($this->fields as $field => $value) {
                     $operator[] = "`{$field}`";
-                    $params[":{$field}"] =  $value;
+                    $params[":{$field}"] = $value;
                 }
 
                 $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), join(', ', array_keys($params))));
@@ -193,7 +193,7 @@ class CandyBuilder implements CandyPacking
 
                 foreach ($this->fields as $field => $value) {
                     $operator[] = "{$field} = :{$field}";
-                    $params[":{$field}"] =  $value;
+                    $params[":{$field}"] = $value;
                 }
 
                 $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), $whereString, $limitString));
