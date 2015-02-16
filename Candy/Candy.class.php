@@ -54,34 +54,33 @@ class Candy
     /**
      * @var array holds the default options
      */
-    private static $options = [
-        PDO::ATTR_PERSISTENT => true,
-        PDO::ERRMODE_EXCEPTION => PDO::ERRMODE_EXCEPTION
-    ];
+    private $options;
 
     /**
      * The constructor to fill up the basic stuff.
      *
      * @param string $host the hostname
      * @param string $user the username to access the database
-     * @param string $password the password to access teh database
+     * @param string $password the password to access the database
      * @param string $database the used database
+     * @param array $options contains the options for the PDO object
      * @throws \InvalidArgumentException If one or more given arguments are null.
      */
-    public function __construct($host, $user, $password, $database)
+    public function __construct($host, $user, $password, $database, $options = null)
     {
 
         $this->host = $host;
         $this->user = $user;
         $this->pass = $password;
         $this->database = $database;
+        $this->options  = ($options === null ? [PDO::ATTR_PERSISTENT => true, PDO::ERRMODE_EXCEPTION => PDO::ERRMODE_EXCEPTION] : []);
 
         if ($host === null || $user === null || $password === null || $database === null) {
             throw new \InvalidArgumentException("One or more given arguments are null.");
         }
 
         try {
-            $this->db = new PDO(sprintf('mysql:host=%s;dbname=%s', $this->host, $this->database), $this->user, $this->pass, static::$options);
+            $this->db = new PDO(sprintf('mysql:host=%s;dbname=%s', $this->host, $this->database), $this->user, $this->pass, $this->options);
         } catch (PDOException $e) {
             $this->error = $e;
         }
