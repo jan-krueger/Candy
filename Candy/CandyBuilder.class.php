@@ -125,8 +125,8 @@ class CandyBuilder implements CandyPacking
     public function build()
     {
 
-        if (is_null($this->workingQuery) || is_null($this->table)) {
-            throw new \InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", is_null($this->workingQuery) ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, is_null($this->table) ? '\SweetCode\Candy\CandyBuilder::table()' : null ));
+        if ($this->workingQuery === null || $this->table === null) {
+            throw new \InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", $this->workingQuery === null ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, $this->table === null ? '\SweetCode\Candy\CandyBuilder::table()' : null ));
         }
 
         $operator = null;
@@ -135,7 +135,7 @@ class CandyBuilder implements CandyPacking
         $whereString = null;
         $limitString = null;
 
-        if (!(is_null($this->where))) {
+        if (!($this->where === null)) {
             $whereString = "WHERE %s";
             $tempWhere = null;
 
@@ -155,7 +155,7 @@ class CandyBuilder implements CandyPacking
             $whereString = sprintf($whereString, $tempWhere);
         }
 
-        if (!(is_null($this->limit))) {
+        if (!($this->limit === null)) {
             $limitString = "LIMIT %s";
             $tempLimit = null;
 
@@ -300,7 +300,7 @@ class CandyBuilder implements CandyPacking
     private function bindAll($params)
     {
 
-        if (is_null($params)) {
+        if ($params === null) {
             return;
         }
 
@@ -324,7 +324,7 @@ class CandyBuilder implements CandyPacking
     private function bind($param, $value, $type = null)
     {
 
-        if (is_null($type)) {
+        if (!($type === null)) {
             switch (true) {
 
                 case is_int($value): $type = PDO::PARAM_INT;
@@ -333,7 +333,7 @@ class CandyBuilder implements CandyPacking
                 case is_bool($value): $type = PDO::PARAM_BOOL;
                     break;
 
-                case is_null($value): $type = PDO::PARAM_NULL;
+                case ($value === null): $type = PDO::PARAM_NULL;
                     break;
 
                 default: $type = PDO::PARAM_STR;

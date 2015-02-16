@@ -169,7 +169,7 @@ class Candy
             throw new \InvalidArgumentException("The given param is null.");
         }
 
-        if (is_null($type)) {
+        if (!($type === null)) {
             switch ($value) {
 
                 case is_int($value): $type = PDO::PARAM_INT;
@@ -178,7 +178,7 @@ class Candy
                 case is_bool($value): $type = PDO::PARAM_BOOL;
                     break;
 
-                case is_null($value): $type = PDO::PARAM_NULL;
+                case ($value === null): $type = PDO::PARAM_NULL;
                     break;
 
                 default: $type = PDO::PARAM_STR;
