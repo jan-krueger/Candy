@@ -5,8 +5,8 @@
 
 namespace SweetCode\Candy;
 
-use \PDO;
-use \PDOException;
+use PDO;
+use PDOException;
 
 /**
  * Class Candy

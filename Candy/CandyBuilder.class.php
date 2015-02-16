@@ -5,7 +5,7 @@
 
 namespace SweetCode\Candy;
 
-use \PDO;
+use PDO;
 
 /**
  * Class CandyBuilder
@@ -49,6 +49,11 @@ class CandyBuilder implements CandyPacking
      * @var array holds the limit conditions
      */
     private $limit;
+
+    /**
+     * @var holds the prepared arguments
+     */
+    private $prepare = [];
 
 
     /**
@@ -110,54 +115,17 @@ class CandyBuilder implements CandyPacking
 
     /**
      * Build up the query
-     * @throws \Exception When do you missed to use the {@see CandyBuilder::table()} or you missed to use
+     * @throws InvalidArgumentException When do you missed to use the {@see CandyBuilder::table()} or you missed to use
      * @return CandyBuilder
      */
     public function build()
     {
 
         if ($this->workingQuery === null || $this->table === null) {
-            throw new \InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", $this->workingQuery === null ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, $this->table === null ? '\SweetCode\Candy\CandyBuilder::table()' : null));
+            throw new InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", $this->workingQuery === null ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, $this->table === null ? '\SweetCode\Candy\CandyBuilder::table()' : null));
         }
 
-        $operator = null;
-        $params = null;
-
-        $whereString = null;
-        $limitString = null;
-
-        if (!($this->where === null)) {
-            $whereString = "WHERE %s";
-            $tempWhere = null;
-
-            foreach ($this->where as $field => $options) {
-                if (!(array_key_exists('value', $options)) || !(array_key_exists('comparator', $options))) {
-                    continue;
-                }
-
-                $tempWhere .= "`{$field}` {$options['comparator']} :where{$field}";
-                $params[":where{$field}"] = $options['value'];
-
-                if (array_key_exists('operator', $options)) {
-                    $tempWhere .= " {$options['operator']} ";
-                }
-            }
-
-            $whereString = sprintf($whereString, $tempWhere);
-        }
-
-        if (!($this->limit === null)) {
-            $limitString = "LIMIT %s";
-            $tempLimit = null;
-
-            $tempLimit .= "{$this->limit['max']}";
-
-            if ($this->limit['range'] != 0) {
-                $tempLimit .= ", {$this->limit['range']}";
-            }
-
-            $limitString = sprintf($limitString, $tempLimit);
-        }
+        $this->prepare();
 
         switch ($this->workingQuery) {
 
@@ -165,50 +133,52 @@ class CandyBuilder implements CandyPacking
 
                 foreach ($this->fields as $field) {
                     if ($field == '*') {
-                        $operator = array('*');
+                        $this->prepare['operator'] = ['*'];
                         break;
                     }
 
-                    $operator[] = "`{$field}`";
+                    $this->prepare['operator'][] = "`{$field}`";
                 }
 
-                $this->query(sprintf($this->workingQuery, join(', ', $operator), $this->table, $whereString, $limitString));
-                $this->bindAll($params);
+                $this->query(sprintf($this->workingQuery, join(', ', $this->prepare['operator']), $this->table, $this->prepare['where'], $this->prepare['limit']));
+                $this->bindAll($this->prepare['params']);
 
                 break;
 
             case CandyAction::INSERT:
 
                 foreach ($this->fields as $field => $value) {
-                    $operator[] = "`{$field}`";
-                    $params[":{$field}"] = $value;
+                    $this->prepare['operator'][] = "`{$field}`";
+                    $this->prepare['params'][":{$field}"] = $value;
                 }
 
-                $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), join(', ', array_keys($params))));
-                $this->bindAll($params);
+                $this->query(sprintf($this->workingQuery, $this->table, join(', ', $this->prepare['operator']), join(', ', array_keys($this->prepare['params']))));
+                $this->bindAll($this->prepare['params']);
 
                 break;
 
             case CandyAction::UPDATE:
 
                 foreach ($this->fields as $field => $value) {
-                    $operator[] = "{$field} = :{$field}";
-                    $params[":{$field}"] = $value;
+                    $this->prepare['operator'][] = "{$field} = :{$field}";
+                    $this->prepare['params'][":{$field}"] = $value;
                 }
 
-                $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), $whereString, $limitString));
-                $this->bindAll($params);
+                $this->query(sprintf($this->workingQuery, $this->table, join(', ', $this->prepare['operator']), $this->prepare['where'], $this->prepare['limit']));
+                $this->bindAll($this->prepare['params']);
 
                 break;
 
             case CandyAction::DELETE:
 
-                $this->query(sprintf($this->workingQuery, $this->table, $whereString, $limitString));
-                $this->bindAll($params);
+                $this->query(sprintf($this->workingQuery, $this->table, $this->prepare['where'], $this->prepare['limit']));
+                $this->bindAll($this->prepare['params']);
 
                 break;
 
         }
+
+        $this->prepare = [];
 
         return $this;
 
@@ -305,6 +275,53 @@ class CandyBuilder implements CandyPacking
     private function bind($param, $value, $type = null)
     {
         $this->stmt->bindValue($param, $value, ($type === null ? Candy::getValueType($value) : $type));
+    }
+
+    private function prepare()
+    {
+
+        $whereString = null;
+        $limitString = null;
+        $params = null;
+
+        if (!($this->where === null)) {
+            $whereString = "WHERE %s";
+            $tempWhere = null;
+
+            foreach ($this->where as $field => $options) {
+                if (!(array_key_exists('value', $options)) || !(array_key_exists('comparator', $options))) {
+                    continue;
+                }
+
+                $tempWhere .= "`{$field}` {$options['comparator']} :where{$field}";
+                $params[":where{$field}"] = $options['value'];
+
+                if (array_key_exists('operator', $options)) {
+                    $tempWhere .= " {$options['operator']} ";
+                }
+            }
+
+            $whereString = sprintf($whereString, $tempWhere);
+        }
+
+        $this->prepare['where'] = $whereString;
+
+        if (!($this->limit === null)) {
+            $limitString = "LIMIT %s";
+            $tempLimit = null;
+
+            $tempLimit .= "{$this->limit['max']}";
+
+            if ($this->limit['range'] != 0) {
+                $tempLimit .= ", {$this->limit['range']}";
+            }
+
+            $limitString = sprintf($limitString, $tempLimit);
+        }
+
+        $this->prepare['limit'] = $limitString;
+        $this->prepare['params'] = $params;
+
     }
 
 }
