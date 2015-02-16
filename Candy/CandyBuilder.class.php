@@ -126,7 +126,14 @@ class CandyBuilder implements CandyPacking
     {
 
         if (is_null($this->workingQuery) || is_null($this->table)) {
+<<<<<<< HEAD
             throw new \InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", is_null($this->workingQuery) ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, is_null($this->table) ? '\SweetCode\Candy\CandyBuilder::table()' : null ));
+=======
+            throw new \Exception(sprintf("Missing arguments (%s %s %s)",
+                is_null($this->workingQuery) ? 'DatabaseBuilder#workingQuery' : null,
+                is_null($this->table) ? 'DatabaseBuilder#table' : null
+            ));
+>>>>>>> origin/master
         }
 
         $operator = null;
@@ -136,10 +143,18 @@ class CandyBuilder implements CandyPacking
         $limitString = null;
 
         if (!(is_null($this->where))) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
             $whereString = "WHERE %s";
             $tempWhere = null;
 
             foreach ($this->where as $field => $options) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
                 if (!(array_key_exists('value', $options)) || !(array_key_exists('comparator', $options))) {
                     continue;
                 }
@@ -148,6 +163,10 @@ class CandyBuilder implements CandyPacking
                 $params[":where{$field}"] = $options['value'];
 
                 if (array_key_exists('operator', $options)) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
                     $tempWhere .= " {$options['operator']} ";
                 }
             }
@@ -156,6 +175,10 @@ class CandyBuilder implements CandyPacking
         }
 
         if (!(is_null($this->limit))) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
             $limitString = "LIMIT %s";
             $tempLimit = null;
 
@@ -170,13 +193,17 @@ class CandyBuilder implements CandyPacking
 
         //$this->workingQuery = DatabaseAction::getPattern($this->workingQuery, $whereString, $limitString);
 
-        switch($this->workingQuery) {
+        switch ($this->workingQuery) {
 
             //SELECT %s FROM `%s`
             //SELECT `name`, `email` FROM `users`
             case CandyAction::SELECT:
 
                 foreach ($this->fields as $field) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
                     if ($field == '*') {
                         $operator = array('*');
                         break;
@@ -195,8 +222,15 @@ class CandyBuilder implements CandyPacking
             case CandyAction::INSERT:
 
                 foreach ($this->fields as $field => $value) {
+<<<<<<< HEAD
                     $operator[] = "`{$field}`";
                     $params[":{$field}"] =  $value;
+=======
+
+                    $operator[] = "`{$field}`";
+                    $params[":{$field}"] = $value;
+
+>>>>>>> origin/master
                 }
 
                 $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), join(', ', array_keys($params))));
@@ -209,8 +243,15 @@ class CandyBuilder implements CandyPacking
             case CandyAction::UPDATE:
 
                 foreach ($this->fields as $field => $value) {
+<<<<<<< HEAD
                     $operator[] = "{$field} = :{$field}";
                     $params[":{$field}"] =  $value;
+=======
+
+                    $operator[] = "{$field} = :{$field}";
+                    $params[":{$field}"] = $value;
+
+>>>>>>> origin/master
                 }
 
                 $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), $whereString, $limitString));
