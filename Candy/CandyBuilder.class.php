@@ -288,8 +288,8 @@ class CandyBuilder implements CandyPacking {
 
     /**
      * This function sets the query
-     * @param $query
-     * @return $this
+     * @param string $query
+     * @return CandyBuilder
      */
     private function query($query) {
         $this->stmt = $this->database->getConnection()->prepare($query);

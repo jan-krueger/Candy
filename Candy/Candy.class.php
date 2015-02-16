@@ -73,7 +73,7 @@ class Candy {
         $this->pass = $password;
         $this->database = $database;
 
-        if(is_null($host) || is_null($user) || is_null($password) || is_null($database)) {
+        if($host === null || $user === null || $password === null || $database === null) {
             throw new \InvalidArgumentException("One or more given arguments are null.");
         }
 
@@ -119,7 +119,7 @@ class Candy {
      */
     public function query($query) {
 
-        if(is_null($query)) {
+        if($query === null) {
             throw new \InvalidArgumentException("The query can't be null.");
         }
 
@@ -139,7 +139,7 @@ class Candy {
             throw new \InvalidArgumentException("The given params is not an array.");
         }
 
-        if(is_null($params)) {
+        if($params === null) {
             throw new \InvalidArgumentException("The given params is null.");
         }
 
@@ -159,7 +159,7 @@ class Candy {
      */
     public function bind($param, $value, $type = null) {
 
-        if(is_null($param)) {
+        if($param === null) {
             throw new \InvalidArgumentException("The given param is null.");
         }
 
