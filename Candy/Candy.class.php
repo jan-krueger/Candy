@@ -6,13 +6,15 @@
 namespace SweetCode\Candy;
 
 use \PDO;
+use \PDOException;
 
 /**
  * Class Candy
  * @author Yonas
  * @package SweetCode\Candy
  */
-class Candy {
+class Candy
+{
 
     /**
      * @var string holds the hostname
@@ -66,22 +68,21 @@ class Candy {
      * @param string $database the used database
      * @throws \InvalidArgumentException If one or more given arguments are null.
      */
-    public function __construct($host, $user, $password, $database) {
+    public function __construct($host, $user, $password, $database)
+    {
 
         $this->host = $host;
         $this->user = $user;
         $this->pass = $password;
         $this->database = $database;
 
-        if($host === null || $user === null || $password === null || $database === null) {
+        if ($host === null || $user === null || $password === null || $database === null) {
             throw new \InvalidArgumentException("One or more given arguments are null.");
         }
 
         try {
-
             $this->db = new PDO(sprintf('mysql:host=%s;dbname=%s', $this->host, $this->database), $this->user, $this->pass, Candy::$options);
-
-        } catch(PDOException $e) {
+        } catch (PDOException $e) {
             $this->error = $e;
         }
 
@@ -91,7 +92,8 @@ class Candy {
      * Returns the PDO instance, used by this class.
      * @return PDO
      */
-    public function getConnection() {
+    public function getConnection()
+    {
         return $this->db;
     }
 
@@ -101,9 +103,10 @@ class Candy {
      * @throws \InvalidArgumentException When the given action is not a valid CandyAction syntax
      * @return CandyBuilder
      */
-    public function newBuilder($action) {
+    public function newBuilder($action)
+    {
 
-        if(!(CandyAction::checkSyntax($action))) {
+        if (!(CandyAction::checkSyntax($action))) {
             throw new \InvalidArgumentException("The given action is invalid.");
         }
 
@@ -117,9 +120,10 @@ class Candy {
      * @throws \InvalidArgumentException When the given query value is null
      * @return $this
      */
-    public function query($query) {
+    public function query($query)
+    {
 
-        if($query === null) {
+        if ($query === null) {
             throw new \InvalidArgumentException("The query can't be null.");
         }
 
@@ -133,17 +137,18 @@ class Candy {
      * @throws \InvalidArgumentException When the given argument is null or the given argument is not an array
      * @return Candy
      */
-    public function bindAll($params) {
+    public function bindAll($params)
+    {
 
-        if(!(is_array($params))) {
+        if (!(is_array($params))) {
             throw new \InvalidArgumentException("The given params is not an array.");
         }
 
-        if($params === null) {
+        if ($params === null) {
             throw new \InvalidArgumentException("The given params is null.");
         }
 
-        foreach($params as $param => $value) {
+        foreach ($params as $param => $value) {
             $this->bind($param, $value);
         }
         return $this;
@@ -157,18 +162,27 @@ class Candy {
      * @throws \InvalidArgumentException When the given param is null.
      * @return $this
      */
-    public function bind($param, $value, $type = null) {
+    public function bind($param, $value, $type = null)
+    {
 
-        if($param === null) {
+        if ($param === null) {
             throw new \InvalidArgumentException("The given param is null.");
         }
 
         if (is_null($type)) {
             switch ($value) {
-                case is_int($value): $type = PDO::PARAM_INT; break;
-                case is_bool($value): $type = PDO::PARAM_BOOL; break;
-                case is_null($value): $type = PDO::PARAM_NULL; break;
-                default: $type = PDO::PARAM_STR; break;
+
+                case is_int($value): $type = PDO::PARAM_INT;
+                    break;
+
+                case is_bool($value): $type = PDO::PARAM_BOOL;
+                    break;
+
+                case is_null($value): $type = PDO::PARAM_NULL;
+                    break;
+
+                default: $type = PDO::PARAM_STR;
+                    break;
             }
         }
 
@@ -180,7 +194,8 @@ class Candy {
      * The method executes the statement.
      * @return Candy
      */
-    public function execute() {
+    public function execute()
+    {
 
         $this->stmt->execute();
 
@@ -191,7 +206,8 @@ class Candy {
      * Returns an array of the result set rows.
      * @return array
      */
-    public function resultSet() {
+    public function resultSet()
+    {
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -199,7 +215,8 @@ class Candy {
      * Very similar to the @see \SweetCode\Candy\Candy::resultSet() method, the @see \SweetCode\Candy\Candy::resultSingle() returns a single record from the database.
      * @return mixed
      */
-    public function resultSingle() {
+    public function resultSingle()
+    {
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -207,7 +224,8 @@ class Candy {
      * Returns an array which is filled up with information about the last error
      * @return array
      */
-    public function errorInfo() {
+    public function errorInfo()
+    {
         return $this->stmt->errorInfo();
     }
 

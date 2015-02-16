@@ -10,7 +10,8 @@ namespace SweetCode\Candy;
  * @author Yonas
  * @package SweetCode\Candy
  */
-class CandyAction {
+class CandyAction
+{
 
     /**
      * @var string holds the syntax of the insert query
@@ -51,10 +52,17 @@ class CandyAction {
 
         switch($given) {
 
-            case CandyAction::INSERT: return true;
-            case CandyAction::UPDATE: return true;
-            case CandyAction::SELECT: return true;
-            case CandyAction::DELETE: return true;
+            case CandyAction::INSERT:
+                return true;
+
+            case CandyAction::UPDATE:
+                return true;
+
+            case CandyAction::SELECT:
+                return true;
+
+            case CandyAction::DELETE:
+                return true;
 
         }
 

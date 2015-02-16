@@ -12,7 +12,8 @@ use \PDO;
  * @author Yonas
  * @package SweetCode\Candy
  */
-class CandyBuilder implements CandyPacking {
+class CandyBuilder implements CandyPacking
+{
 
     /**
      * @var Candy holds the instance of the Candy Class who is running this Builder
@@ -64,7 +65,8 @@ class CandyBuilder implements CandyPacking {
      * @param Candy $database the instance of the database
      * @param string $workingQuery the CandyAction
      */
-    public function __construct(Candy $database, $workingQuery) {
+    public function __construct(Candy $database, $workingQuery)
+    {
         $this->database = $database;
         $this->workingQuery = $workingQuery;
     }
@@ -74,7 +76,8 @@ class CandyBuilder implements CandyPacking {
      * @param array $fields the array with the field names
      * @return CandyBuilder
      */
-    public function fields(array $fields) {
+    public function fields(array $fields)
+    {
         $this->fields = $fields;
         return $this;
     }
@@ -84,7 +87,8 @@ class CandyBuilder implements CandyPacking {
      * @param string $table the table name
      * @return CandyBuilder
      */
-    public function table($table) {
+    public function table($table)
+    {
         $this->table = $table;
         return $this;
     }
@@ -94,7 +98,8 @@ class CandyBuilder implements CandyPacking {
      * @param array $where the conditions array
      * @return CandyBuilder
      */
-    public function where(array $where) {
+    public function where(array $where)
+    {
         $this->where = $where;
         return $this;
     }
@@ -105,7 +110,8 @@ class CandyBuilder implements CandyPacking {
      * @param int $range the range of the results
      * @return CandyBuilder
      */
-    public function limit($max, $range = 0) {
+    public function limit($max, $range = 0)
+    {
         $this->limit['max'] = $max;
         $this->limit['range'] = $range;
         return $this;
@@ -116,13 +122,11 @@ class CandyBuilder implements CandyPacking {
      * @throws \Exception When do you missed to use the {@see CandyBuilder::table()} or you missed to use
      * @return CandyBuilder
      */
-    public function build() {
+    public function build()
+    {
 
-        if(is_null($this->workingQuery) || is_null($this->table)) {
-            throw new \Exception(sprintf("Missing arguments (%s %s %s)",
-                is_null($this->workingQuery) ? 'DatabaseBuilder#workingQuery' : null,
-                is_null($this->table) ? 'DatabaseBuilder#table' : null
-            ));
+        if (is_null($this->workingQuery) || is_null($this->table)) {
+            throw new \InvalidArgumentException(sprintf("Missing arguments (%s %s %s)", is_null($this->workingQuery) ? '\SweetCode\Candy\CandyBuilder::workingQuery' : null, is_null($this->table) ? '\SweetCode\Candy\CandyBuilder::table()' : null ));
         }
 
         $operator = null;
@@ -131,45 +135,37 @@ class CandyBuilder implements CandyPacking {
         $whereString = null;
         $limitString = null;
 
-        if(!(is_null($this->where))) {
-
+        if (!(is_null($this->where))) {
             $whereString = "WHERE %s";
             $tempWhere = null;
 
-            foreach($this->where as $field => $options) {
-
-                if(!(array_key_exists('value', $options)) || !(array_key_exists('comparator', $options))) {
+            foreach ($this->where as $field => $options) {
+                if (!(array_key_exists('value', $options)) || !(array_key_exists('comparator', $options))) {
                     continue;
                 }
 
                 $tempWhere .= "`{$field}` {$options['comparator']} :where{$field}";
                 $params[":where{$field}"] = $options['value'];
 
-                if(array_key_exists('operator', $options)) {
-
+                if (array_key_exists('operator', $options)) {
                     $tempWhere .= " {$options['operator']} ";
-
                 }
-
             }
 
             $whereString = sprintf($whereString, $tempWhere);
-
         }
 
-        if(!(is_null($this->limit))) {
-
+        if (!(is_null($this->limit))) {
             $limitString = "LIMIT %s";
             $tempLimit = null;
 
             $tempLimit .= "{$this->limit['max']}";
 
-            if($this->limit['range'] != 0) {
+            if ($this->limit['range'] != 0) {
                 $tempLimit .= ", {$this->limit['range']}";
             }
 
             $limitString = sprintf($limitString, $tempLimit);
-
         }
 
         //$this->workingQuery = DatabaseAction::getPattern($this->workingQuery, $whereString, $limitString);
@@ -180,15 +176,13 @@ class CandyBuilder implements CandyPacking {
             //SELECT `name`, `email` FROM `users`
             case CandyAction::SELECT:
 
-                foreach($this->fields as $field) {
-
-                    if($field == '*') {
+                foreach ($this->fields as $field) {
+                    if ($field == '*') {
                         $operator = array('*');
                         break;
                     }
 
                     $operator[] = "`{$field}`";
-
                 }
 
                 $this->query(sprintf($this->workingQuery, join(', ', $operator), $this->table, $whereString, $limitString));
@@ -200,11 +194,9 @@ class CandyBuilder implements CandyPacking {
             //INSERT INTO `users` (`name`, `email`) VALUES (:name, :email)
             case CandyAction::INSERT:
 
-                foreach($this->fields as $field => $value) {
-
+                foreach ($this->fields as $field => $value) {
                     $operator[] = "`{$field}`";
                     $params[":{$field}"] =  $value;
-
                 }
 
                 $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), join(', ', array_keys($params))));
@@ -216,11 +208,9 @@ class CandyBuilder implements CandyPacking {
             //UPDATE `users` SET `name` = :name, `email` = :email
             case CandyAction::UPDATE:
 
-                foreach($this->fields as $field => $value) {
-
+                foreach ($this->fields as $field => $value) {
                     $operator[] = "{$field} = :{$field}";
                     $params[":{$field}"] =  $value;
-
                 }
 
                 $this->query(sprintf($this->workingQuery, $this->table, join(', ', $operator), $whereString, $limitString));
@@ -248,7 +238,8 @@ class CandyBuilder implements CandyPacking {
      * @param integer $method Controls how the next row will be returned to the caller. This value must be one of the PDO::FETCH_* constants, defaulting to value of PDO::ATTR_DEFAULT_FETCH_MODE (which defaults to PDO::FETCH_BOTH)
      * @return array
      */
-    public function resultSet($method = PDO::FETCH_ASSOC) {
+    public function resultSet($method = PDO::FETCH_ASSOC)
+    {
         return $this->stmt->fetchAll($method);
     }
 
@@ -257,7 +248,8 @@ class CandyBuilder implements CandyPacking {
      * @param integer $method Controls how the next row will be returned to the caller. This value must be one of the PDO::FETCH_* constants, defaulting to value of PDO::ATTR_DEFAULT_FETCH_MODE (which defaults to PDO::FETCH_BOTH)
      * @return mixed
      */
-    public function resultSingle($method = PDO::FETCH_ASSOC) {
+    public function resultSingle($method = PDO::FETCH_ASSOC)
+    {
         return $this->stmt->fetch($method);
     }
 
@@ -265,7 +257,8 @@ class CandyBuilder implements CandyPacking {
      * Returns the number of effected rows from the previous statement.
      * @return int
      */
-    public function rowCount() {
+    public function rowCount()
+    {
         return $this->stmt->rowCount();
     }
 
@@ -273,7 +266,8 @@ class CandyBuilder implements CandyPacking {
      * Executes the Query
      * @return CandyBuilder
      */
-    public function execute() {
+    public function execute()
+    {
         $this->stmt->execute();
         return $this;
     }
@@ -282,7 +276,8 @@ class CandyBuilder implements CandyPacking {
      * Returns an array which is filled up with information about the last error
      * @return array
      */
-    public function errorInfo() {
+    public function errorInfo()
+    {
         return $this->stmt->errorInfo();
     }
 
@@ -291,7 +286,8 @@ class CandyBuilder implements CandyPacking {
      * @param string $query
      * @return CandyBuilder
      */
-    private function query($query) {
+    private function query($query)
+    {
         $this->stmt = $this->database->getConnection()->prepare($query);
         return $this;
     }
@@ -301,17 +297,18 @@ class CandyBuilder implements CandyPacking {
      * @param $params the array with the parameters
      * @return void
      */
-    private function bindAll($params) {
+    private function bindAll($params)
+    {
 
-        if(is_null($params)) {
+        if (is_null($params)) {
             return;
         }
 
-        if(!(is_array($params))) {
+        if (!(is_array($params))) {
             return;
         }
 
-        foreach($params as $param => $value) {
+        foreach ($params as $param => $value) {
             $this->bind($param, $value);
         }
 
@@ -324,14 +321,24 @@ class CandyBuilder implements CandyPacking {
      * @param null|integer $type Controls the kind of the given value. This value must be one of the PDO::PARAM_* constants, defaulting to value of PDO::PARAM_STR
      * @return void
      */
-    private function bind($param, $value, $type = null) {
+    private function bind($param, $value, $type = null)
+    {
 
         if (is_null($type)) {
             switch (true) {
-                case is_int($value): $type = PDO::PARAM_INT; break;
-                case is_bool($value): $type = PDO::PARAM_BOOL; break;
-                case is_null($value): $type = PDO::PARAM_NULL; break;
-                default: $type = PDO::PARAM_STR; break;
+
+                case is_int($value): $type = PDO::PARAM_INT;
+                    break;
+
+                case is_bool($value): $type = PDO::PARAM_BOOL;
+                    break;
+
+                case is_null($value): $type = PDO::PARAM_NULL;
+                    break;
+
+                default: $type = PDO::PARAM_STR;
+                    break;
+
             }
         }
 

@@ -10,7 +10,8 @@ namespace SweetCode\Candy;
  * @author Yonas
  * @package SweetCode\Candy
  */
-interface CandyPacking {
+interface CandyPacking
+{
 
     /**
      * Sets the used fields
