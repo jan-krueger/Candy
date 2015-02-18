@@ -1,4 +1,11 @@
 language: php
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/815467eff6b7917e6c8d
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: false     # default: false
 env:
   - DB:mysql
 script: phpunit tests/test.php
