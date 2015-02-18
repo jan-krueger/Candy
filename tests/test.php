@@ -4,10 +4,10 @@
  */
 
 
-require_once dirname(__FILE__) . '\..\Candy\Candy.class.php';
-require_once dirname(__FILE__) . '\..\Candy\CandyPacking.class.php';
-require_once dirname(__FILE__) . '\..\Candy\CandyBuilder.class.php';
-require_once dirname(__FILE__) . '\..\Candy\CandyAction.class.php';
+require_once dirname(__FILE__) . '/../Candy/Candy.class.php';
+require_once dirname(__FILE__) . '/../Candy/CandyPacking.class.php';
+require_once dirname(__FILE__) . '/../Candy/CandyBuilder.class.php';
+require_once dirname(__FILE__) . '/../Candy/CandyAction.class.php';
 
 use SweetCode\Candy\Candy;
 use SweetCode\Candy\CandyAction;
@@ -53,7 +53,7 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * @return PHPUnit_Extensions_Database_DataSet_IDataSet
      */
     public function getDataSet()  {
-        return $this->createFlatXmlDataSet(dirname(__FILE__) . '\users.xml');
+        return $this->createFlatXmlDataSet(dirname(__FILE__) . '/users.xml');
     }
 
     /**
