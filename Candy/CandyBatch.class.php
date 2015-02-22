@@ -75,22 +75,17 @@ class CandyBatch
         $this->error = [];
 
         foreach ($this->list as $entry) {
-            if ($entry->isBuilt()) {
-                $entry->execute();
-                $this->error[] = $entry->errorInfo();
+            if (!($entry->isBuilt()) && $forceBuild) {
+                $entry->build();
+            }
 
-                $this->result[] = $entry->resultSet();
-
-
+            if (!($entry->isBuilt())) {
                 continue;
             }
 
-            if ($forceBuild && !($entry->isBuilt())) {
-                $entry->build()->execute();
-                $this->error[] = $entry->errorInfo();
-                $this->result[] = $entry->resultSet();
-
-            }
+            $entry->build()->execute();
+            $this->error[] = $entry->errorInfo();
+            $this->result[] = $entry->resultSet();
 
         }
     }
