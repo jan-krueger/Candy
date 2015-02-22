@@ -6,6 +6,7 @@
 
 require_once dirname(__FILE__) . '/../Candy/Candy.class.php';
 require_once dirname(__FILE__) . '/../Candy/CandyPacking.class.php';
+require_once dirname(__FILE__) . '/../Candy/CandyBatch.class.php';
 require_once dirname(__FILE__) . '/../Candy/CandyBuilder.class.php';
 require_once dirname(__FILE__) . '/../Candy/CandyAction.class.php';
 
@@ -16,51 +17,28 @@ use SweetCode\Candy\CandyAction;
  * Class CandyTest
  * @author Yonas
  */
-class CandyTest extends PHPUnit_Extensions_Database_TestCase {
+class CandyTest extends PHPUnit_Framework_TestCase {
 
     /**
      * @var Candy holds the Candy instance
      */
     private $database;
 
-    /**
-     * @var PHPUnit_Extensions_Database_DB_IDatabaseConnection holds the default db connection
-     */
-    private $defaultDBConnection;
 
     /**
      * This is the constructor it has no function.
      */
-    public function __construct() {}
-
-    /**
-     * This methods returns the current connection.
-     * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
-     */
-    public function getConnection() {
-
-        if(is_null($this->database)) {
-            $candy = $this->database = new Candy("localhost", "root", "", "candy");
-            return $this->defaultDBConnection = $this->createDefaultDBConnection($candy->getConnection(), 'candy:');
-        }
-
-        return $this->defaultDBConnection;
-
-    }
-
-    /**
-     * This method returns the data set.
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
-    public function getDataSet()  {
-        return $this->createFlatXmlDataSet(dirname(__FILE__) . '/users.xml');
+    public function __construct()
+    {
+        $this->database = new Candy("localhost", "root", "", "candy");
     }
 
     /**
      * This function tries to add a new user to the database
      * @return void
      */
-    public function testInsertAction() {
+    public function testInsertAction()
+    {
         $builder = $this->database->newBuilder(CandyAction::INSERT)
             ->fields(['name' => 'Yonas', 'email' => 'yonas@example.com', 'password' => 'blb'])
             ->table('users')
@@ -74,7 +52,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * This function tests the update action
      * @return void
      */
-    public function testUpdateAction() {
+    public function testUpdateAction()
+    {
         $builder = $this->database->newBuilder(CandyAction::UPDATE)
             ->fields([
                 'password' => 'itsokaybecauseitssave',
@@ -103,7 +82,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * This function tests the select function
      * @return void
      */
-    public function testSelectAction() {
+    public function testSelectAction()
+    {
         $result = $this->database->newBuilder(CandyAction::SELECT)
             ->fields(['*'])
             ->table('users')
@@ -127,7 +107,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * This function tests the delete function
      * @return void
      */
-    public function testDeleteAction() {
+    public function testDeleteAction()
+    {
         $builder = $this->database->newBuilder(CandyAction::DELETE)
                     ->table('users')
                     ->limit(1)
@@ -137,11 +118,34 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
         $this->assertEquals(0, $builder->errorInfo()[0], $builder->errorInfo());
     }
 
+    public function testBatchFunction()
+    {
+
+        $batch = new \SweetCode\Candy\CandyBatch();
+
+        $this->database->newBuilder(CandyAction::INSERT)
+            ->fields(['name' => 'Obama', 'email' => 'obama@example.com', 'password' => 'abac'])
+            ->table('users')
+            ->build()->addBatch($batch);
+
+        $this->database->newBuilder(CandyAction::SELECT)
+            ->fields(['*'])
+            ->table('users')
+            ->addBatch($batch);
+
+        $batch->execute(true);
+
+        $this->assertEquals(true, is_array($batch->getResults()), "Batch returns invalid results.");
+        $this->assertEquals(true, is_array($batch->getErrors()), "Batch returns invalid errros.");
+
+    }
+
     /**
      * Tests the Exception of the @see \SweetCode\Candy\Candy::newBuilder() method
      * @expectedException \InvalidArgumentException
      */
-    public function testBuilderExceptionIfInvalidActionIsGiven() {
+    public function testBuilderExceptionIfInvalidActionIsGiven()
+    {
 
         $this->database->newBuilder("JUST A STUPID TEST");
 
@@ -151,7 +155,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * Tests the Exception of the @see \SweetCode\Candy\Candy::__constructor() method
      * @expectedException \InvalidArgumentException
      */
-    public function testConstructorIfInvalidArgumentIsGiven() {
+    public function testConstructorIfInvalidArgumentIsGiven()
+    {
 
         new Candy("localhost", "root", "", null);
 
@@ -161,7 +166,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * Tests the Exception of the @see \SweetCode\Candy\Candy::query() method
      * @expectedException \InvalidArgumentException
      */
-    public function testQueryIfInvalidArgumentIsGiven() {
+    public function testQueryIfInvalidArgumentIsGiven()
+    {
 
         $this->database->query(null);
 
@@ -171,7 +177,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * Tests the Exception of the @see \SweetCode\Candy\Candy::bindAll() method when a non-array argument is given
      * @expectedException \InvalidArgumentException
      */
-    public function testBindAllIfInvalidArgumentIsGivenInThisCaseAString() {
+    public function testBindAllIfInvalidArgumentIsGivenInThisCaseAString()
+    {
 
         $this->database->bindAll("JUST A STUPID TEST");
 
@@ -181,7 +188,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * Tests the Exception of the @see \SweetCode\Candy\Candy::bindAll() method when the argument is null
      * @expectedException \InvalidArgumentException
      */
-    public function testBindAllIfInvalidArgumentIsGivenInThisCaseNull() {
+    public function testBindAllIfInvalidArgumentIsGivenInThisCaseNull()
+    {
 
         $this->database->bindAll(null);
 
@@ -191,7 +199,8 @@ class CandyTest extends PHPUnit_Extensions_Database_TestCase {
      * Tests the Exception of the @see \SweetCode\Candy\Candy::bind() method when the argument is null
      * @expectedException \InvalidArgumentException
      */
-    public function testBindIfInvalidArgumentIsGivenInThisCaseNull() {
+    public function testBindIfInvalidArgumentIsGivenInThisCaseNull()
+    {
 
         $this->database->bind(null, "JUST A STUPID TEST");
 

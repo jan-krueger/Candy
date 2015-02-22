@@ -55,6 +55,11 @@ class CandyBuilder implements CandyPacking
      */
     private $prepare = [];
 
+    /**
+     * @var bool holds the boolean if the builder is built-up or not.
+     */
+    private $build = false;
+
 
     /**
      * This is the constructor to create a new object of CandyBuilder
@@ -111,6 +116,26 @@ class CandyBuilder implements CandyPacking
         $this->limit['max'] = $max;
         $this->limit['range'] = $range;
         return $this;
+    }
+
+    /**
+     * This function adds this CandyBuilder instance to a CandyBatch.
+     * @param CandyBatch $batch The instance of the batch.
+     * @return CandyBuilder
+     */
+    public function addBatch(CandyBatch $batch)
+    {
+        $batch->add($this);
+        return $this;
+    }
+
+    /**
+     * This functions returns true when the @see CandyBuilder::build() runs one time or more.
+     * @return bool
+     */
+    public function isBuilt()
+    {
+        return $this->build;
     }
 
     /**
@@ -179,6 +204,7 @@ class CandyBuilder implements CandyPacking
         }
 
         $this->prepare = [];
+        $this->build = true;
 
         return $this;
 
@@ -278,7 +304,7 @@ class CandyBuilder implements CandyPacking
     }
 
     /**
-     * This method prepares the @see \SweetCode\Candy\CandyBuilder::build() method. 
+     * This method prepares the @see \SweetCode\Candy\CandyBuilder::build() method.
      */
     private function prepare()
     {

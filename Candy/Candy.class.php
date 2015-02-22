@@ -42,7 +42,7 @@ class Candy
     private $db;
 
     /**
-     * @var \Exception|PDOException holds the latest error
+     * @var \Exception|\PDOException holds the latest error
      */
     private $error;
 
@@ -115,9 +115,9 @@ class Candy
 
     /**
      * The method introduces the stmt variable to hold the statement.
-     * @param $query
+     * @param string $query
      * @throws \InvalidArgumentException When the given query value is null
-     * @return $this
+     * @return Candy
      */
     public function query($query)
     {
@@ -159,7 +159,7 @@ class Candy
      * @param mixed $value is the actual value that you want to bind to the placeholder.
      * @param null|integer $type Controls the kind of the given value. This value must be one of the PDO::PARAM_* constants, defaulting to value of PDO::PARAM_STR
      * @throws \InvalidArgumentException When the given param is null.
-     * @return $this
+     * @return Candy
      */
     public function bind($param, $value, $type = null)
     {

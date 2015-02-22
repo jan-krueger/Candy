@@ -48,7 +48,8 @@ class CandyAction
      * @param string $given The syntax string.
      * @return bool Returns true when the syntax is right.
      */
-    public static function checkSyntax($given) {
+    public static function checkSyntax($given)
+    {
 
         switch($given) {
 
