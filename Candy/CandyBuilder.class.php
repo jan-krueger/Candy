@@ -259,6 +259,40 @@ class CandyBuilder implements CandyPacking
     }
 
     /**
+     * This function returns the results as pagination.
+     * @param int $perPage how many entrys per page
+     * @return array
+     */
+    public function asPagination($perPage = 5)
+    {
+
+        $page = [];
+        $pageIndex = 0;
+        $entryIndex = 0;
+
+        if (!($this->isBuilt())) {
+            return $page;
+        }
+
+        $results = $this->resultSet();
+
+        foreach ($results as $result) {
+            if ($entryIndex >= $perPage) {
+                $pageIndex++;
+                $entryIndex = 0;
+            }
+
+            $page[$pageIndex][$entryIndex] = $result;
+            $entryIndex++;
+
+        }
+
+        return $page;
+
+
+    }
+
+    /**
      * This function sets the query
      * @param string $query
      * @return CandyBuilder

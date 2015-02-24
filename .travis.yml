@@ -11,4 +11,4 @@ env:
 script: phpunit tests/test.php
 before_script:
   - mysql -e 'CREATE DATABASE `candy`;'
-  - mysql -u root --password= candy < tests/users.sql
+  - mysql -u root --password= candy < tests/candy.sql

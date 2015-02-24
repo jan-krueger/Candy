@@ -141,6 +141,21 @@ class CandyTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Tests the pagination function.
+     */
+    public function testPagination()
+    {
+
+        $pagination = $this->database->newBuilder(CandyAction::SELECT)
+                    ->fields(['*'])
+                    ->table('articles')
+                    ->build()->execute()->asPagination(3);
+
+        $this->assertEquals(3, count($pagination), "The pagination function stops working.");
+
+    }
+
+    /**
      * Tests the Exception of the @see \SweetCode\Candy\Candy::newBuilder() method
      * @expectedException \InvalidArgumentException
      */
